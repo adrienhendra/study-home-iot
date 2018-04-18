@@ -1,5 +1,16 @@
 {
   "dependencies": {
     "jshint": "^2.9.5"
-  }
+  },
+  "devDependencies": {
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.14"
+  },
+  "name": "study-home-iot",
+  "version": "1.0.0",
+  "description": "iot",
+  "main": "index.js",
+  "author": "Adrien Soepriatna",
+  "license": "MIT",
+  "private": true
 }
