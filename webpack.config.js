@@ -2,37 +2,58 @@
 
 const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+    mode: 'development',
 
-  mode: 'none',
+    entry: ['webpack-dev-server/client?http://localhost:5000', 'webpack/hot/only-dev-server', './src/index.js'],
 
-  output: {
-    path: path.resolve(__dirname, 'public'),
-    publicPath: '/public/',
-    filename: 'project.bundle.js'
-  },
+    output: {
+        path: path.resolve(__dirname, 'public'),
+        filename: 'bundle.js'
+    },
 
-  module: {
-    rules: [
-      {
-        test: [/\.vert$/, /\.frag$/],
-        use: 'raw-loader'
-      }
-    ]
-  },
+    module: {
+        rules: [
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.html$/,
+                use: 'html-loader'
+            },
+            {
+                test: /\.(png|jp(e*)g|svg|gif)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            publicPath: '',
+                            useRelativePath: true
+                        }
+                    }
+                ]
+            }
+        ]
+    },
 
-  plugins: [
-    new webpack.DefinePlugin({
-      CANVAS_RENDERER: JSON.stringify(true),
-      WEBGL_RENDERER: JSON.stringify(true)
-    })
-  ],
+    plugins: [
+        new webpack.HotModuleReplacementPlugin(),
+        new HtmlWebpackPlugin({
+            title: 'IoT Demo',
+            hash: true,
+            template: 'src/index.html'
+        })
+    ],
 
-  devServer:{
-      contentBase: path.join(__dirname, 'public'),
-      compress: true,
-      port: 9000
-  }
+    devServer: {
+        contentBase: path.join(__dirname, 'public'),
+        compress: true,
+        port: 5000,
+        hot: true,
+        inline: true
+    }
 };

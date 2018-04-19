@@ -1,47 +1,28 @@
-import 'phaser';
+/* Files to bundle */
+import './style.css';
+import './index.html';
 
 /* Import firebase */
-import * as firebase from 'firebase';
+import { app } from 'firebase';
 
-// Initialize Firebase
-var fb_config = {
-  apiKey: 'AIzaSyDbNOykje9_Se35J7aPtqoGVKHtJx3Zavo',
-  authDomain: 'study-home-iot.firebaseapp.com',
-  databaseURL: 'https://study-home-iot.firebaseio.com',
-  projectId: 'study-home-iot',
-  storageBucket: 'study-home-iot.appspot.com',
-  messagingSenderId: '210399166672'
+/* Import my modules */
+import IoTMon from './iotmon';
+
+var test = () => {
+    console.log('Hello World');
+    //   alert("Heeeei!");
 };
-var db = firebase.initializeApp(fb_config).database();
-console.log(fb_config);
 
-var phaser_config = {
-  type: Phaser.AUTO,
-  parent: 'phaser-example',
-  width: 800,
-  height: 600,
-  scene: {
-    preload: preload,
-    create: create
-  }
-};
-console.log(phaser_config);
+console.log('Test 2');
+test();
 
-var game = new Phaser.Game(phaser_config);
+console.log('Test 3');
 
-function preload() {
-  this.load.image('logo', 'assets/logo.png');
-}
+{
+    /* Get document element */
+    const appWinContainer = document.getElementById('app-container');
 
-function create() {
-  var logo = this.add.image(400, 150, 'logo');
-
-  this.tweens.add({
-    targets: logo,
-    y: 450,
-    duration: 2000,
-    ease: 'Power2',
-    yoyo: true,
-    loop: -1
-  });
+    let appWin = new IoTMon(appWinContainer);
+    appWin.autoScale();
+    appWin.loadImage();
 }

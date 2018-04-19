@@ -1,0 +1,9 @@
+.hello {
+  color: green;
+}
+
+/* Set all default padding and margin to 0 */
+* {
+  padding: 0;
+  margin: 0;
+}
