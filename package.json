@@ -1,6 +1,7 @@
 {
     "dependencies": {
         "firebase": "^4.12.1",
+        "pixi-sound": "^2.0.2",
         "pixi.js": "^4.7.3"
     },
     "devDependencies": {
@@ -29,5 +30,7 @@
         "start": "yarn build && webpack-dev-server",
         "start-dev": "yarn build-dev && webpack-dev-server"
     },
-    "keywords": ["iot"]
+    "keywords": [
+        "iot"
+    ]
 }

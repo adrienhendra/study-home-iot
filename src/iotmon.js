@@ -2,6 +2,9 @@
 
 /* Import pixi.js */
 import * as PIXI from 'pixi.js';
+import 'pixi-sound';
+
+import './sounds/chime.mp3';
 
 /* Aliases */
 const PxApplication = PIXI.Application;
@@ -56,6 +59,13 @@ class IoTMon {
                 url: 'assets/cat.png',
                 onComplete: () => {
                     console.log('Completed cat');
+                }
+            },
+            {
+                name: 'chime',
+                url: 'sounds/chime.mp3',
+                onComplete: () => {
+                    console.log('Completed chime');
                 }
             }
         ];
@@ -143,6 +153,7 @@ class IoTMon {
         circle_cont.interactive = true;
         circle_cont.on('click', () => {
             console.log('Circle container clicked!');
+            PxResources['chime'].sound.play();
         });
 
         /* Add circle container to stage */
