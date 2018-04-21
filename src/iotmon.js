@@ -5,6 +5,8 @@ import * as PIXI from 'pixi.js';
 import 'pixi-sound';
 
 import './sounds/chime.mp3';
+import './assets/iot-home-textures.tjson';
+import './assets/iot-home-textures.png';
 
 /* Aliases */
 const PxApplication = PIXI.Application;
@@ -46,7 +48,7 @@ class IoTMon {
         this.scale = 1.0;
         this.gameState = this.gamePlay;
 
-        this.textures = [
+        this.manifest = [
             {
                 name: 'tex-icon',
                 url: 'assets/icon.png',
@@ -70,8 +72,9 @@ class IoTMon {
             }
         ];
 
-        /* Load these textures */
-        PxLoader.add([this.textures])
+        /* Load manifest */
+        PxLoader.add([this.manifest])
+            .add('assets/iot-home-textures.json')
             .on('progress', (loader, resource) => {
                 console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
                 if (null != resource.error) {
@@ -80,6 +83,9 @@ class IoTMon {
             })
             .load(() => {
                 console.log('All files loaded!');
+
+                /* Auto scale */
+                // this.autoScale();
 
                 /* Reinit state */
                 this.gameState = this.gamePlay;
@@ -105,13 +111,27 @@ class IoTMon {
     }
 
     loadImage() {
-        // let ball = new PxSprite(PxResources['assets/icon.png'].texture);
-        // let cat = new PxSprite(PxResources['assets/cat.png'].texture);
-        let ball = new PxSprite(PxResources[this.textures[0].name].texture);
+        /* Draw GUI Frame */
+        let gf = PxResources['assets/iot-home-textures.json'].textures;
+        let gfsp = new PxSprite(gf['Frame.png']);
+        let sp_layout = new PxSprite(gf['Layout.png']);
+        let sp_fp = new PxSprite(gf['fish-pond.png']);
+        let sp_fsg = new PxSprite(gf['fence-ok.png']);
+        let sp_fsng = new PxSprite(gf['fence-not-ok.png']);
+        gfsp.position.set(0,0);
+        sp_layout.position.set(24,24);
+        sp_fp.position.set(400,360);
+        sp_fsg.position.set(24,24);
+        this.pixiApp.stage.addChild(gfsp);
+        this.pixiApp.stage.addChild(sp_layout);
+        this.pixiApp.stage.addChild(sp_fp);
+        this.pixiApp.stage.addChild(sp_fsg);
+
+        let ball = new PxSprite(PxResources['tex-icon'].texture);
         ball.position.set(50, 50);
-        let cat = new PxSprite(PxResources[this.textures[1].name].texture);
+        let cat = new PxSprite(PxResources['tex-cat'].texture);
         cat.position.set(10, 10);
-        let cat2 = new PxSprite(PxResources[this.textures[1].name].texture);
+        let cat2 = new PxSprite(PxResources['tex-cat'].texture);
         cat2.position.set(30, 30);
         /* Add the picture */
         this.pixiApp.stage.addChild(ball);

@@ -25,6 +25,19 @@ module.exports = {
                 use: 'html-loader'
             },
             {
+                test: /\.tjson$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].json',
+                            publicPath: '',
+                            useRelativePath: true
+                        }
+                    }
+                ]
+            },
+            {
                 test: /\.(png|jp(e*)g|svg|gif)$/,
                 use: [
                     {
@@ -56,9 +69,10 @@ module.exports = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new HtmlWebpackPlugin({
-            title: 'IoT Demo',
+            filename: 'index.html',
+            title: 'Home Monitoring Application',
             hash: true,
-            template: 'src/index.html'
+            template: 'src/index.ejs'
         })
     ],
 

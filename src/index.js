@@ -1,9 +1,13 @@
 /* Files to bundle */
 import './style.css';
-import './index.html';
+// import './index.html';
+
+/* Import bootstrap */
+import 'bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 /* Import firebase */
-import { app } from 'firebase';
+// import { app } from 'firebase';
 
 /* Import my modules */
 import IoTMon from './iotmon';

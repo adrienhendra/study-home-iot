@@ -1,0 +1,148 @@
+{"frames": {
+
+"BEDROOM.png":
+{
+	"frame": {"x":0,"y":0,"w":77,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":77,"h":13},
+	"sourceSize": {"w":77,"h":13}
+},
+"BR1.png":
+{
+	"frame": {"x":77,"y":0,"w":20,"h":10},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":20,"h":10},
+	"sourceSize": {"w":20,"h":10}
+},
+"BR2.png":
+{
+	"frame": {"x":97,"y":0,"w":22,"h":10},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":10},
+	"sourceSize": {"w":22,"h":10}
+},
+"BR3.png":
+{
+	"frame": {"x":119,"y":0,"w":21,"h":10},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":21,"h":10},
+	"sourceSize": {"w":21,"h":10}
+},
+"DINING.png":
+{
+	"frame": {"x":140,"y":0,"w":73,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":73,"h":17},
+	"sourceSize": {"w":73,"h":17}
+},
+"DRIVEWAY.png":
+{
+	"frame": {"x":213,"y":0,"w":78,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":78,"h":13},
+	"sourceSize": {"w":78,"h":13}
+},
+"fence-not-ok.png":
+{
+	"frame": {"x":291,"y":0,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+},
+"fence-ok.png":
+{
+	"frame": {"x":0,"y":456,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+},
+"fish-pond.png":
+{
+	"frame": {"x":592,"y":456,"w":140,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":80},
+	"sourceSize": {"w":140,"h":80}
+},
+"Frame.png":
+{
+	"frame": {"x":0,"y":912,"w":640,"h":640},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":640,"h":640},
+	"sourceSize": {"w":640,"h":640}
+},
+"FRONT GARDEN.png":
+{
+	"frame": {"x":640,"y":912,"w":118,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":118,"h":13},
+	"sourceSize": {"w":118,"h":13}
+},
+"GAME ROOM.png":
+{
+	"frame": {"x":758,"y":912,"w":98,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":98,"h":13},
+	"sourceSize": {"w":98,"h":13}
+},
+"GARAGE.png":
+{
+	"frame": {"x":0,"y":1552,"w":64,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":13},
+	"sourceSize": {"w":64,"h":13}
+},
+"GUEST ROOM.png":
+{
+	"frame": {"x":64,"y":1552,"w":101,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":101,"h":13},
+	"sourceSize": {"w":101,"h":13}
+},
+"KITCHEN.png":
+{
+	"frame": {"x":165,"y":1552,"w":85,"h":17},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":85,"h":17},
+	"sourceSize": {"w":85,"h":17}
+},
+"Layout.png":
+{
+	"frame": {"x":250,"y":1552,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+},
+"STORAGE.png":
+{
+	"frame": {"x":842,"y":1552,"w":70,"h":13},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":70,"h":13},
+	"sourceSize": {"w":70,"h":13}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "iot-home-textures.png",
+	"format": "RGBA8888",
+	"size": {"w":912,"h":2008},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e0f997327e6c65d2637f337885c42c3f:3c9c2b000a13134b3ebb8eb287d0f6fc:46ae24105e71e33e58b2bb261255f841$"
+}
+}
