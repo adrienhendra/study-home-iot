@@ -19,6 +19,9 @@ const PxRectangle = PIXI.Rectangle;
 const PxText = PIXI.Text;
 const PxGraphics = PIXI.Graphics;
 
+/* Alias for my console debug */
+const Console = console;
+
 /* Import assets */
 import './assets/icon.png';
 import './assets/cat.png';
@@ -53,21 +56,21 @@ class IoTMon {
                 name: 'tex-icon',
                 url: 'assets/icon.png',
                 onComplete: () => {
-                    console.log('Completed icon');
+                    Console.log('Completed icon');
                 }
             },
             {
                 name: 'tex-cat',
                 url: 'assets/cat.png',
                 onComplete: () => {
-                    console.log('Completed cat');
+                    Console.log('Completed cat');
                 }
             },
             {
                 name: 'chime',
                 url: 'sounds/chime.mp3',
                 onComplete: () => {
-                    console.log('Completed chime');
+                    Console.log('Completed chime');
                 }
             }
         ];
@@ -76,13 +79,13 @@ class IoTMon {
         PxLoader.add([this.manifest])
             .add('assets/iot-home-textures.json')
             .on('progress', (loader, resource) => {
-                console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
+                Console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
                 if (null != resource.error) {
-                    console.log(' Error: ' + resource.error);
+                    Console.log(' Error: ' + resource.error);
                 }
             })
             .load(() => {
-                console.log('All files loaded!');
+                Console.log('All files loaded!');
 
                 /* Auto scale */
                 // this.autoScale();
@@ -107,7 +110,7 @@ class IoTMon {
     autoScale() {
         /* Auto scale window */
         this.scale = scaleToWindow(this.pixiApp.renderer.view);
-        console.log('New scale: ' + this.scale);
+        Console.log('New scale: ' + this.scale);
     }
 
     loadImage() {
@@ -137,7 +140,7 @@ class IoTMon {
         this.pixiApp.stage.addChild(ball);
         this.pixiApp.stage.addChild(cat);
         this.pixiApp.stage.addChild(cat2);
-        console.log('Ball & cat loaded?');
+        Console.log('Ball & cat loaded?');
 
         /* Set cat velocities */
         cat.vx = 0;
@@ -172,7 +175,7 @@ class IoTMon {
         /* Make circle container interactive */
         circle_cont.interactive = true;
         circle_cont.on('click', () => {
-            console.log('Circle container clicked!');
+            Console.log('Circle container clicked!');
             PxResources['chime'].sound.play();
         });
 

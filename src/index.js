@@ -12,15 +12,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 /* Import my modules */
 import IoTMon from './iotmon';
 
+/* Alias for my console debug */
+const Console = console;
+
 var test = () => {
-    console.log('Hello World');
+    Console.log('Hello World');
     //   alert("Heeeei!");
 };
 
-console.log('Test 2');
+Console.log('Test 2');
 test();
 
-console.log('Test 3');
+Console.log('Test 3');
 
 {
     /* Get document element */
