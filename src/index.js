@@ -23,6 +23,4 @@ console.log('Test 3');
     const appWinContainer = document.getElementById('app-container');
 
     let appWin = new IoTMon(appWinContainer);
-    appWin.autoScale();
-    appWin.loadImage();
 }

@@ -36,6 +36,19 @@ module.exports = {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.(wav|mp3)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                            publicPath: '',
+                            useRelativePath: true
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -54,6 +67,7 @@ module.exports = {
         compress: true,
         port: 5000,
         hot: true,
-        inline: true
+        inline: true,
+        host: '0.0.0.0'
     }
 };
