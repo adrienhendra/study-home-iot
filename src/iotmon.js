@@ -4,10 +4,6 @@
 import * as PIXI from 'pixi.js';
 import 'pixi-sound';
 
-import './sounds/chime.mp3';
-import './assets/iot-home-textures.tjson';
-import './assets/iot-home-textures.png';
-
 /* Aliases */
 const PxApplication = PIXI.Application;
 const PxContainer = PIXI.Container;
@@ -23,16 +19,38 @@ const PxGraphics = PIXI.Graphics;
 const Console = console;
 
 /* Import assets */
-import './assets/icon.png';
-import './assets/cat.png';
+import './assets/asset-textures.tjson';
+import './assets/asset-textures.png';
+import './assets/control-textures.tjson';
+import './assets/control-textures.png';
+import './assets/weather-textures.tjson';
+import './assets/weather-textures.png';
 
 /* My modules */
 import { scaleToWindow } from './scaleToWindow';
+import * as SENSORS from './sensors';
+import * as REMOTES from './remotes';
 
+/* Import assets (for testing only) */
+import './sounds/chime.mp3';
+import './assets/iot-home-textures.tjson';
+import './assets/iot-home-textures.png';
+import './assets/icon.png';
+import './assets/cat.png';
+
+/* IoT Monitor top module */
 class IoTMon {
     constructor(appBody) {
+        /* Create sensor object to keep track of all sensors */
+        // this.sensors = new Obj
+
+        /* Create remote object to keep track of all remotes */
+
+
+
         /* Sensors items */
         this.sensors = new Array();
+        this.sensors_dict = new Object();
         this.sensorTickCounter = 0.0;
 
         this.appBody = appBody;
@@ -52,6 +70,29 @@ class IoTMon {
         this.gameState = this.gamePlay;
 
         this.manifest = [
+            /* Main assets */
+            {
+                name: 'asset-textures',
+                url: 'assets/asset-textures.json',
+                onComplete: () => {
+                    Console.log('Completed asset textures');
+                }
+            },
+            {
+                name: 'control-textures',
+                url: 'assets/control-textures.json',
+                onComplete: () => {
+                    Console.log('Completed control textures');
+                }
+            },
+            {
+                name: 'weather-textures',
+                url: 'assets/weather-textures.json',
+                onComplete: () => {
+                    Console.log('Completed weather textures');
+                }
+            },
+            /* These as for testing purpose only */
             {
                 name: 'tex-icon',
                 url: 'assets/icon.png',
@@ -105,12 +146,59 @@ class IoTMon {
         // this.pixiApp.stage.on('click', () => {
         //     console.log('Stage clicked!');
         // });
+
+        /* Test object */
+        this.testremotes = new REMOTES.DigitalControlRemote('DIG', {
+            0: { name: 'a', val: 0 },
+            1: { name: 'b', val: 0 },
+            2: { name: 'c', val: 0 }
+        });
+
+        // this.testremotes = new REMOTES.DigitalControlRemote('DIG', { 0: { name: 'a', val: 0 } });
+        this.testremotes.updateControl(0, 'aa');
+        this.testremotes.updateControl(2, 'aa');
+        // Console.log(`testremotes value is ${this.testremotes.readVal(0)}`);
+        // Console.log(`testremotes value is ${this.testremotes.readVal(2)}`);
     }
 
     autoScale() {
         /* Auto scale window */
         this.scale = scaleToWindow(this.pixiApp.renderer.view);
         Console.log('New scale: ' + this.scale);
+    }
+
+    createSensorNode(name, textureName, sensorType, options, updateFn = null, textureAtlasName = null) {
+        let item_sprite = null;
+
+        let x_pos = options.x;
+        let y_pos = options.y;
+
+        /* Determine if it is necessary to load texture from texture atlas or not */
+        if ('undefined' !== typeof textureAtlasName || null !== textureAtlasName) {
+            let tex_ref = PxResources[textureAtlasName].textures;
+            item_sprite = new PxSprite(tex_ref[textureName]);
+        } else {
+            item_sprite = new PxSprite(PxResources[textureName].texture);
+        }
+
+        /* Check if sprite is generated properly */
+        if ('undefined' !== typeof item_sprite || null !== item_sprite) {
+            /* Set sprite options */
+            item_sprite.position.set(x_pos, y_pos);
+
+            /* Add special functions */
+            let sensor_obj = {
+                name: name,
+                sensor_type: sensorType,
+                sprite: item_sprite,
+                update: updateFn
+            };
+
+            /* Add to stage array */
+            this.sensors_dict[name] = sensor_obj;
+        } else {
+            Console.log('Something wrong here ...');
+        }
     }
 
     loadImage() {
@@ -120,11 +208,11 @@ class IoTMon {
         let sp_layout = new PxSprite(gf['Layout.png']);
         let sp_fp = new PxSprite(gf['fish-pond.png']);
         let sp_fsg = new PxSprite(gf['fence-ok.png']);
-        let sp_fsng = new PxSprite(gf['fence-not-ok.png']);
-        gfsp.position.set(0,0);
-        sp_layout.position.set(24,24);
-        sp_fp.position.set(400,360);
-        sp_fsg.position.set(24,24);
+        // let sp_fsng = new PxSprite(gf['fence-not-ok.png']);
+        gfsp.position.set(0, 0);
+        sp_layout.position.set(24, 24);
+        sp_fp.position.set(400, 360);
+        sp_fsg.position.set(24, 24);
         this.pixiApp.stage.addChild(gfsp);
         this.pixiApp.stage.addChild(sp_layout);
         this.pixiApp.stage.addChild(sp_fp);
@@ -177,6 +265,9 @@ class IoTMon {
         circle_cont.on('click', () => {
             Console.log('Circle container clicked!');
             PxResources['chime'].sound.play();
+
+            let test_sensor = new SENSORS.TemperatureSensor('dummy');
+            Console.log(test_sensor.name);
         });
 
         /* Add circle container to stage */
@@ -185,6 +276,22 @@ class IoTMon {
         this.sensors.push(cat);
         this.sensors.push(cat2);
         this.sensors.push(circle_cont);
+
+        /* Create new my sensor */
+        this.createSensorNode(
+            'test',
+            'fish-pond.png',
+            'water-level-sensor',
+            { x: 300, y: 300 },
+            null,
+            'assets/iot-home-textures.json'
+        );
+
+        /* Test adding my new object to the stage */
+        this.pixiApp.stage.addChild(this.sensors_dict['test'].sprite);
+
+        /* Test if remotes can access PIXI class or not */
+        this.testremotes.readVal(0);
     }
 
     updateTickCounter(glDelta) {
@@ -218,7 +325,26 @@ class IoTMon {
         }
 
         this.sensors[2].updateText('ASA: ' + temp_gl_counter);
+
+        /* Move test sprite */
+        this.sensors_dict['test'].sprite.y += 1;
+        if (this.sensors_dict['test'].sprite.y > 400) {
+            this.sensors_dict['test'].sprite.y = 100;
+        }
     }
 }
 
 export default IoTMon;
+
+export {
+    PxApplication,
+    PxContainer,
+    PxLoader,
+    PxResources,
+    PxTextureCache,
+    PxSprite,
+    PxRectangle,
+    PxText,
+    PxGraphics,
+    Console
+};

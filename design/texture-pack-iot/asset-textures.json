@@ -1,0 +1,52 @@
+{"frames": {
+
+"fence-not-ok.png":
+{
+	"frame": {"x":0,"y":0,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+},
+"fence-ok.png":
+{
+	"frame": {"x":0,"y":456,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+},
+"fish-pond.png":
+{
+	"frame": {"x":592,"y":456,"w":140,"h":80},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":140,"h":80},
+	"sourceSize": {"w":140,"h":80}
+},
+"frame.png":
+{
+	"frame": {"x":0,"y":912,"w":640,"h":640},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":640,"h":640},
+	"sourceSize": {"w":640,"h":640}
+},
+"layout.png":
+{
+	"frame": {"x":0,"y":1552,"w":592,"h":456},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":592,"h":456},
+	"sourceSize": {"w":592,"h":456}
+}},
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "asset-textures.png",
+	"format": "RGBA8888",
+	"size": {"w":732,"h":2008},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:e79641fb06a42c4a344b4b78550c9df8:f06dac83ce8351f4281dd9f1a83eace0:a079bec762907a72775a707142b04625$"
+}
+}

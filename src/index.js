@@ -1,6 +1,6 @@
 /* Files to bundle */
 import './style.css';
-// import './index.html';
+import './home.png';
 
 /* Import bootstrap */
 import 'bootstrap';
