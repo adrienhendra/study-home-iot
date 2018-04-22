@@ -33,24 +33,107 @@ import {
 const DEF_NODATA = null;
 
 class DigitalControlRemote {
-    constructor(name, ctrlObj = null) {
+    constructor(name, x, y, pixiAppRef, ctrlObj = null) {
         this.name = name;
         this.controlObjects = ctrlObj;
+        this.x = x;
+        this.y = y;
+        this.pixiAppRef = pixiAppRef;
+
+        /* Texture pack to use is fixed */
+        this.textureRef = PxResources['control-textures'].textures;
 
         /* Functions bind */
         this.updateControl = this.updateControl.bind(this);
         this.readVal = this.readVal.bind(this);
         this.getChannelName = this.getChannelName.bind(this);
+        this.redraw = this.redraw.bind(this);
 
         /* Create object facade */
         this.sprites = new Object();
         if (undefined !== typeof this.controlObjects && null != this.controlObjects) {
+            let temp_y_container_offset = 0;
             Object.keys(this.controlObjects).forEach(k => {
                 Console.log(
                     `Added control object ${this.controlObjects[k].name} with initial value of ${
                         this.controlObjects[k].val
-                    }`
+                    } with type of ${this.controlObjects[k].type}`
                 );
+
+                /* Create sprite */
+                let remote_container = new PxContainer();
+                let remote_sprite = null;
+                let remote_text = null;
+
+                /* Select appropriate image */
+                switch (this.controlObjects[k].type) {
+                    case 'light-switch':
+                        remote_sprite = new PxSprite(this.textureRef['lamp-auto.png']);
+                        /* Make container interactive */
+                        remote_container.interactive = true;
+
+                        break;
+                    default:
+                        Console.log('Unsupported type');
+                }
+
+                /* Values are always string */
+                remote_text = new PxText(this.controlObjects[k].val);
+                remote_text.style = { fill: 'black', fontSize: '32px', fontFamily: 'courier' };
+
+                /* Attach function as property to update the sprite */
+                remote_container.updateVal = text => {
+                    remote_text.text = text;
+                };
+
+                remote_container.readVal = () => {
+                    return remote_text.text;
+                };
+
+                if (true === remote_container.interactive) {
+                    remote_container.on('click', () => {
+                        Console.log(`${this.name} ${this.controlObjects[k].name} clicked!`);
+                        let curr_val = parseInt(this.readVal(k));
+                        Console.log(`Current value for channel ${k} is ${curr_val}`);
+                        if (0 === curr_val) {
+                            this.updateControl(k, 1);
+                        } else {
+                            this.updateControl(k, 0);
+                        }
+                        Console.log(`New value for channel ${k} is ${this.readVal(k)}`);
+                        PxResources['chime'].sound.play();
+                    });
+                }
+
+                /* Calculate position of sprite */
+                let text_x_offset = 0;
+                let text_y_offset = 0;
+                let max_y_size = 0;
+                if (null !== remote_sprite) {
+                    /* Resize sprite to 16x16px */
+                    remote_sprite.scale.set(32.0 / remote_sprite.width);
+
+                    remote_sprite.position.set(0, 0);
+                    remote_container.addChild(remote_sprite);
+                    text_x_offset = remote_sprite.width + 5;
+                    text_y_offset = 0;
+                    max_y_size = remote_sprite.height;
+                }
+                remote_text.position.set(text_x_offset, text_y_offset);
+
+                remote_container.addChild(remote_text);
+
+                /* Set remote container position */
+                remote_container.position.set(this.x + 0, this.y + temp_y_container_offset);
+
+                /* Update y offset */
+                temp_y_container_offset += (max_y_size > remote_text.height ? max_y_size : remote_text.height) + 5;
+
+                /* Add container to Application */
+                this.pixiAppRef.stage.addChild(remote_container);
+
+                /* Record containers */
+                this.sprites[this.controlObjects[k].name] = remote_container;
             });
         }
     }
@@ -59,13 +142,24 @@ class DigitalControlRemote {
         let temp_val = this.controlObjects[channel];
         if (undefined !== typeof temp_val && null != temp_val) {
             /* Channel available */
-            Console.log(`[DIGITAL] Name: ${this.name}, Ch: ${channel}, Val: ${value}`);
+            Console.log(
+                `[DIGITAL] Name: ${this.name} ${this.controlObjects[channel].name}, Ch: ${channel}, Val: ${value}`
+            );
+            /* Update control value here */
+            this.controlObjects[channel].val = value;
 
-            /* TODO: Send out new channel value */
+            /* TODO: Emit actual changes here */
         } else {
             /* Channel not available */
-            Console.log(`[DIGITAL] Name: ${this.name}, Ch: ${channel}, Val: ${value} is not available.`);
+            Console.log(
+                `[DIGITAL] Name: ${this.name} ${
+                    this.controlObjects[channel].name
+                }, Ch: ${channel}, Val: ${value} is not available.`
+            );
         }
+
+        /* Redraw sprite */
+        this.redraw();
     }
 
     readVal(channel) {
@@ -86,6 +180,12 @@ class DigitalControlRemote {
             read_val = this.controlObjects[channel].name;
         }
         return read_val;
+    }
+
+    redraw() {
+        Object.keys(this.controlObjects).forEach(k => {
+            this.sprites[this.controlObjects[k].name].updateVal(this.controlObjects[k].val);
+        });
     }
 }
 

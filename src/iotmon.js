@@ -25,100 +25,90 @@ import './assets/control-textures.tjson';
 import './assets/control-textures.png';
 import './assets/weather-textures.tjson';
 import './assets/weather-textures.png';
+import './sounds/chime.mp3';
 
 /* My modules */
 import { scaleToWindow } from './scaleToWindow';
 import * as SENSORS from './sensors';
 import * as REMOTES from './remotes';
 
-/* Import assets (for testing only) */
-import './sounds/chime.mp3';
-import './assets/iot-home-textures.tjson';
-import './assets/iot-home-textures.png';
-import './assets/icon.png';
-import './assets/cat.png';
+// /* Import assets (for testing only) */
+// import './sounds/chime.mp3';
+// import './assets/iot-home-textures.tjson';
+// import './assets/iot-home-textures.png';
+// import './assets/icon.png';
+// import './assets/cat.png';
 
 /* IoT Monitor top module */
 class IoTMon {
-    constructor(appBody) {
+    constructor(appContainer) {
+        /* Remember application's container */
+        this.appContainer = appContainer;
+
         /* Create sensor object to keep track of all sensors */
-        // this.sensors = new Obj
+        this.sensors = new Object();
 
         /* Create remote object to keep track of all remotes */
+        this.remotes = new Object();
 
-
-
-        /* Sensors items */
-        this.sensors = new Array();
-        this.sensors_dict = new Object();
-        this.sensorTickCounter = 0.0;
-
-        this.appBody = appBody;
-
-        /* Pixi.js example */
+        /* Create and initialize PIXI application */
         this.pixiApp = new PxApplication({
             width: 640,
             height: 640,
-            backgroundColor: 0x4b87f4,
+            backgroundColor: 0x000000,
             antialias: true,
             autoResize: true
         });
 
-        this.appBody.appendChild(this.pixiApp.view);
+        this.appContainer.appendChild(this.pixiApp.view);
 
+        /* Remember game states */
         this.scale = 1.0;
         this.gameState = this.gamePlay;
 
-        this.manifest = [
-            /* Main assets */
+        /* Bind functions */
+        this.loadGui = this.loadGui.bind(this);
+        this.gameLoop = this.gameLoop.bind(this);
+        this.gamePlay = this.gamePlay.bind(this);
+        this.createSensors = this.createSensors.bind(this);
+        this.createRemotes = this.createRemotes.bind(this);
+
+        /* Build manifest data. This will be loaded by PIXI.loader engine */
+        this.appManifest = [
+            /* Main textures */
             {
                 name: 'asset-textures',
                 url: 'assets/asset-textures.json',
                 onComplete: () => {
-                    Console.log('Completed asset textures');
+                    Console.log('Asset textures loaded!');
                 }
             },
             {
                 name: 'control-textures',
                 url: 'assets/control-textures.json',
                 onComplete: () => {
-                    Console.log('Completed control textures');
+                    Console.log('Control textures loaded!');
                 }
             },
             {
                 name: 'weather-textures',
                 url: 'assets/weather-textures.json',
                 onComplete: () => {
-                    Console.log('Completed weather textures');
+                    Console.log('Weather textures loaded!');
                 }
             },
-            /* These as for testing purpose only */
-            {
-                name: 'tex-icon',
-                url: 'assets/icon.png',
-                onComplete: () => {
-                    Console.log('Completed icon');
-                }
-            },
-            {
-                name: 'tex-cat',
-                url: 'assets/cat.png',
-                onComplete: () => {
-                    Console.log('Completed cat');
-                }
-            },
+            /* Sounds */
             {
                 name: 'chime',
                 url: 'sounds/chime.mp3',
                 onComplete: () => {
-                    Console.log('Completed chime');
+                    Console.log('Chime loaded!');
                 }
             }
         ];
 
-        /* Load manifest */
-        PxLoader.add([this.manifest])
-            .add('assets/iot-home-textures.json')
+        /* Load application manifest */
+        PxLoader.add([this.appManifest])
             .on('progress', (loader, resource) => {
                 Console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
                 if (null != resource.error) {
@@ -134,12 +124,110 @@ class IoTMon {
                 /* Reinit state */
                 this.gameState = this.gamePlay;
 
-                /* Begin setup */
-                this.loadImage();
+                /* Begin GUI setup */
+                this.loadGui();
+
+                /* Load other manifests */
+                this.createSensors();
+                this.createRemotes();
+                // this.loadImage();
 
                 /* Begin game loop */
                 this.pixiApp.ticker.add(delta => this.gameLoop(delta));
             });
+
+        // /* Sensors items */
+        // this.sensors = new Array();
+        // this.sensors_dict = new Object();
+        // this.sensorTickCounter = 0.0;
+
+        // this.appBody = appBody;
+
+        // /* Pixi.js example */
+        // this.pixiApp = new PxApplication({
+        //     width: 640,
+        //     height: 640,
+        //     backgroundColor: 0x4b87f4,
+        //     antialias: true,
+        //     autoResize: true
+        // });
+
+        // this.appBody.appendChild(this.pixiApp.view);
+
+        // this.scale = 1.0;
+        // this.gameState = this.gamePlay;
+
+        // this.manifest = [
+        //     /* Main assets */
+        //     {
+        //         name: 'asset-textures',
+        //         url: 'assets/asset-textures.json',
+        //         onComplete: () => {
+        //             Console.log('Completed asset textures');
+        //         }
+        //     },
+        //     {
+        //         name: 'control-textures',
+        //         url: 'assets/control-textures.json',
+        //         onComplete: () => {
+        //             Console.log('Completed control textures');
+        //         }
+        //     },
+        //     {
+        //         name: 'weather-textures',
+        //         url: 'assets/weather-textures.json',
+        //         onComplete: () => {
+        //             Console.log('Completed weather textures');
+        //         }
+        //     },
+        //     /* These as for testing purpose only */
+        //     {
+        //         name: 'tex-icon',
+        //         url: 'assets/icon.png',
+        //         onComplete: () => {
+        //             Console.log('Completed icon');
+        //         }
+        //     },
+        //     {
+        //         name: 'tex-cat',
+        //         url: 'assets/cat.png',
+        //         onComplete: () => {
+        //             Console.log('Completed cat');
+        //         }
+        //     },
+        //     {
+        //         name: 'chime',
+        //         url: 'sounds/chime.mp3',
+        //         onComplete: () => {
+        //             Console.log('Completed chime');
+        //         }
+        //     }
+        // ];
+
+        // /* Load manifest */
+        // PxLoader.add([this.manifest])
+        //     .add('assets/iot-home-textures.json')
+        //     .on('progress', (loader, resource) => {
+        //         Console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
+        //         if (null != resource.error) {
+        //             Console.log(' Error: ' + resource.error);
+        //         }
+        //     })
+        //     .load(() => {
+        //         Console.log('All files loaded!');
+
+        //         /* Auto scale */
+        //         // this.autoScale();
+
+        //         /* Reinit state */
+        //         this.gameState = this.gamePlay;
+
+        //         /* Begin setup */
+        //         this.loadImage();
+
+        //         /* Begin game loop */
+        //         this.pixiApp.ticker.add(delta => this.gameLoop(delta));
+        //     });
 
         // /* Make stage interactive */
         // this.pixiApp.stage.interactive = true;
@@ -147,16 +235,16 @@ class IoTMon {
         //     console.log('Stage clicked!');
         // });
 
-        /* Test object */
-        this.testremotes = new REMOTES.DigitalControlRemote('DIG', {
-            0: { name: 'a', val: 0 },
-            1: { name: 'b', val: 0 },
-            2: { name: 'c', val: 0 }
-        });
+        // /* Test object */
+        // this.testremotes = new REMOTES.DigitalControlRemote('DIG', {
+        //     0: { name: 'a', val: 0 },
+        //     1: { name: 'b', val: 0 },
+        //     2: { name: 'c', val: 0 }
+        // });
 
-        // this.testremotes = new REMOTES.DigitalControlRemote('DIG', { 0: { name: 'a', val: 0 } });
-        this.testremotes.updateControl(0, 'aa');
-        this.testremotes.updateControl(2, 'aa');
+        // // this.testremotes = new REMOTES.DigitalControlRemote('DIG', { 0: { name: 'a', val: 0 } });
+        // this.testremotes.updateControl(0, 'aa');
+        // this.testremotes.updateControl(2, 'aa');
         // Console.log(`testremotes value is ${this.testremotes.readVal(0)}`);
         // Console.log(`testremotes value is ${this.testremotes.readVal(2)}`);
     }
@@ -165,6 +253,56 @@ class IoTMon {
         /* Auto scale window */
         this.scale = scaleToWindow(this.pixiApp.renderer.view);
         Console.log('New scale: ' + this.scale);
+    }
+
+    loadGui() {
+        /* Get texture for the main GUI frame */
+        let texture_ref = PxResources['asset-textures'].textures;
+
+        /* Draw main GUI frame sprites */
+        let frame = new PxSprite(texture_ref['frame.png']);
+        let home_layout = new PxSprite(texture_ref['layout.png']);
+        let pond_layout = new PxSprite(texture_ref['fish-pond.png']);
+        let fence_layout = new PxSprite(texture_ref['fence-ok.png']);
+
+        /* Set position (fixed) */
+        frame.position.set(0, 0);
+        home_layout.position.set(24, 24);
+        pond_layout.position.set(400, 360);
+        fence_layout.position.set(24, 24);
+
+        /* Add to pixi application stage */
+        this.pixiApp.stage.addChild(frame);
+        this.pixiApp.stage.addChild(home_layout);
+        this.pixiApp.stage.addChild(pond_layout);
+        this.pixiApp.stage.addChild(fence_layout);
+
+        /* Notify user that GUI is done loading! */
+        Console.log('Main GUI ready!');
+        PxResources['chime'].sound.play();
+    }
+
+    createSensors() {
+        /* Create all sensors here */
+        this.sensors['temp-br1'] = new SENSORS.TemperatureSensor('temp-br1');
+    }
+
+    createRemotes() {
+        /* Create all remotes here */
+        /* Bedroom 1 */
+        this.remotes['digi-br1'] = new REMOTES.DigitalControlRemote('digi-br1', 450, 200, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' },
+            1: { name: 'light-1', val: 0, type: 'light-switch' },
+            2: { name: 'light-2', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-br2'] = new REMOTES.DigitalControlRemote('digi-br2', 450, 100, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        /* Add all in remotes to GUI */
+
+        Console.log(`remotes value is ${this.remotes['digi-br1'].readVal(0)}`);
     }
 
     createSensorNode(name, textureName, sensorType, options, updateFn = null, textureAtlasName = null) {
@@ -309,28 +447,32 @@ class IoTMon {
         /* Get current game timeloop */
         let temp_gl_counter = this.updateTickCounter(delta);
 
-        /* Blinking sensor item */
-        if (temp_gl_counter < 50.0) {
-            this.sensors[1].visible = true;
-        } else {
-            this.sensors[1].visible = false;
-        }
+        /* Update all sensors */
 
-        /* Move Sprite */
-        this.sensors[0].vx = 2;
-        this.sensors[0].vy = 0;
-        this.sensors[0].x += this.sensors[0].vx;
-        if (this.sensors[0].x > 400) {
-            this.sensors[0].x = 100;
-        }
+        /* Update all remotes */
 
-        this.sensors[2].updateText('ASA: ' + temp_gl_counter);
+        // /* Blinking sensor item */
+        // if (temp_gl_counter < 50.0) {
+        //     this.sensors[1].visible = true;
+        // } else {
+        //     this.sensors[1].visible = false;
+        // }
 
-        /* Move test sprite */
-        this.sensors_dict['test'].sprite.y += 1;
-        if (this.sensors_dict['test'].sprite.y > 400) {
-            this.sensors_dict['test'].sprite.y = 100;
-        }
+        // /* Move Sprite */
+        // this.sensors[0].vx = 2;
+        // this.sensors[0].vy = 0;
+        // this.sensors[0].x += this.sensors[0].vx;
+        // if (this.sensors[0].x > 400) {
+        //     this.sensors[0].x = 100;
+        // }
+
+        // this.sensors[2].updateText('ASA: ' + temp_gl_counter);
+
+        // /* Move test sprite */
+        // this.sensors_dict['test'].sprite.y += 1;
+        // if (this.sensors_dict['test'].sprite.y > 400) {
+        //     this.sensors_dict['test'].sprite.y = 100;
+        // }
     }
 }
 
