@@ -13,21 +13,6 @@ import {
     PxGraphics,
     Console
 } from './iotmon';
-/* Aliases */
-// const PxApplication = PIXI.Application;
-// const PxContainer = PIXI.Container;
-// const PxLoader = PIXI.loader;
-// const PxResources = PIXI.loader.resources;
-// // const PxTextureCache = PIXI.utils.TextureCache;
-// const PxSprite = PIXI.Sprite;
-// const PxRectangle = PIXI.Rectangle;
-// const PxText = PIXI.Text;
-// const PxGraphics = PIXI.Graphics;
-
-/* Alias for my console debug */
-// const Console = console;
-
-/* Assets */
 
 /* Default constants */
 const DEF_NODATA = null;
@@ -48,6 +33,7 @@ class DigitalControlRemote {
         this.readVal = this.readVal.bind(this);
         this.getChannelName = this.getChannelName.bind(this);
         this.redraw = this.redraw.bind(this);
+        this.onClickHandler = this.onClickHandler.bind(this);
 
         /* Create object facade */
         this.sprites = new Object();
@@ -92,16 +78,7 @@ class DigitalControlRemote {
 
                 if (true === remote_container.interactive) {
                     remote_container.on('click', () => {
-                        Console.log(`${this.name} ${this.controlObjects[k].name} clicked!`);
-                        let curr_val = parseInt(this.readVal(k));
-                        Console.log(`Current value for channel ${k} is ${curr_val}`);
-                        if (0 === curr_val) {
-                            this.updateControl(k, 1);
-                        } else {
-                            this.updateControl(k, 0);
-                        }
-                        Console.log(`New value for channel ${k} is ${this.readVal(k)}`);
-                        PxResources['chime'].sound.play();
+                        this.onClickHandler(k, this.name, this.controlObjects[k].name);
                     });
                 }
 
@@ -138,7 +115,7 @@ class DigitalControlRemote {
         }
     }
 
-    updateControl(channel, value) {
+    updateControl(channel, value, sendSignal) {
         let temp_val = this.controlObjects[channel];
         if (undefined !== typeof temp_val && null != temp_val) {
             /* Channel available */
@@ -149,6 +126,10 @@ class DigitalControlRemote {
             this.controlObjects[channel].val = value;
 
             /* TODO: Emit actual changes here */
+            if (true === sendSignal) {
+                /* Send signal to MQTT */
+                Console.log('Send signal to MQTT');
+            }
         } else {
             /* Channel not available */
             Console.log(
@@ -168,7 +149,7 @@ class DigitalControlRemote {
         if (undefined !== typeof temp_val && null != temp_val) {
             read_val = this.controlObjects[channel].val;
         }
-        PxResources['chime'].sound.play();
+        // PxResources['chime'].sound.play();
 
         return read_val;
     }
@@ -180,6 +161,24 @@ class DigitalControlRemote {
             read_val = this.controlObjects[channel].name;
         }
         return read_val;
+    }
+
+    onClickHandler(idx, objectName, channelName) {
+        Console.log(`${objectName} ${channelName} clicked!`);
+        let curr_val = parseInt(this.readVal(idx));
+        Console.log(`Current value for channel ${idx} is ${curr_val}`);
+        if (-1 === curr_val) {
+            Console.log('Please wait until remote is ready.');
+            return;
+        }
+
+        if (0 === curr_val) {
+            this.updateControl(idx, 1, true);
+        } else {
+            this.updateControl(idx, 0, true);
+        }
+        Console.log(`New value for channel ${idx} is ${this.readVal(idx)}`);
+        PxResources['chime'].sound.play();
     }
 
     redraw() {

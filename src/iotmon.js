@@ -279,24 +279,119 @@ class IoTMon {
 
         /* Notify user that GUI is done loading! */
         Console.log('Main GUI ready!');
-        PxResources['chime'].sound.play();
+        // PxResources['chime'].sound.play();
     }
 
     createSensors() {
         /* Create all sensors here */
-        this.sensors['temp-br1'] = new SENSORS.TemperatureSensor('temp-br1');
+        /* Bedroom temperature and humidity sensors */
+        this.sensors['temp-br1'] = new SENSORS.TemperatureSensor('temp-br1', 425, 280, this.pixiApp, {
+            0: { name: 'temp-0', val: 25 }
+        });
+
+        this.sensors['humi-br1'] = new SENSORS.HumiditySensor('humi-br1', 515, 280, this.pixiApp, {
+            0: { name: 'humi-0', val: 70 }
+        });
+
+        this.sensors['temp-br2'] = new SENSORS.TemperatureSensor('temp-br2', 425, 100, this.pixiApp, {
+            0: { name: 'temp-0', val: 25 }
+        });
+
+        this.sensors['humi-br2'] = new SENSORS.HumiditySensor('humi-br2', 515, 100, this.pixiApp, {
+            0: { name: 'humi-0', val: 70 }
+        });
+
+        this.sensors['temp-br3'] = new SENSORS.TemperatureSensor('temp-br3', 180, 290, this.pixiApp, {
+            0: { name: 'temp-0', val: 25 }
+        });
+
+        this.sensors['humi-br3'] = new SENSORS.HumiditySensor('humi-br3', 270, 290, this.pixiApp, {
+            0: { name: 'humi-0', val: 70 }
+        });
+
+        /* Dining room temperature and humidity sensors */
+        this.sensors['temp-dr'] = new SENSORS.TemperatureSensor('temp-dr', 300, 60, this.pixiApp, {
+            0: { name: 'temp-0', val: 25 }
+        });
+
+        this.sensors['humi-dr'] = new SENSORS.HumiditySensor('humi-dr', 300, 100, this.pixiApp, {
+            0: { name: 'humi-0', val: 70 }
+        });
     }
 
     createRemotes() {
         /* Create all remotes here */
-        /* Bedroom 1 */
-        this.remotes['digi-br1'] = new REMOTES.DigitalControlRemote('digi-br1', 450, 200, this.pixiApp, {
+        /* Bedroom lights */
+        this.remotes['digi-br1'] = new REMOTES.DigitalControlRemote('digi-br1', 430, 200, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' },
+            1: { name: 'light-1', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-br2'] = new REMOTES.DigitalControlRemote('digi-br2', 430, 60, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-br3'] = new REMOTES.DigitalControlRemote('digi-br3', 180, 250, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        /* Dining room lights */
+        this.remotes['digi-dr'] = new REMOTES.DigitalControlRemote('digi-dr', 200, 60, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' },
+            1: { name: 'light-1', val: 0, type: 'light-switch' },
+            2: { name: 'light-2', val: 0, type: 'light-switch' },
+            3: { name: 'light-3', val: 0, type: 'light-switch' }
+        });
+
+        /* Kitchen lights */
+        this.remotes['digi-kit'] = new REMOTES.DigitalControlRemote('digi-kit', 70, 60, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        /* Storage lights */
+        this.remotes['digi-sto'] = new REMOTES.DigitalControlRemote('digi-sto', 70, 125, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        /* Garage lights */
+        this.remotes['digi-gar'] = new REMOTES.DigitalControlRemote('digi-gar', 70, 200, this.pixiApp, {
             0: { name: 'light-0', val: 0, type: 'light-switch' },
             1: { name: 'light-1', val: 0, type: 'light-switch' },
             2: { name: 'light-2', val: 0, type: 'light-switch' }
         });
 
-        this.remotes['digi-br2'] = new REMOTES.DigitalControlRemote('digi-br2', 450, 100, this.pixiApp, {
+        /* Toilet lights */
+        this.remotes['digi-t0'] = new REMOTES.DigitalControlRemote('digi-t0', 540, 145, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-t1'] = new REMOTES.DigitalControlRemote('digi-t1', 530, 200, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-t2'] = new REMOTES.DigitalControlRemote('digi-t2', 360, 250, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        /* Outdoor lights */
+        this.remotes['digi-o0'] = new REMOTES.DigitalControlRemote('digi-o0', 50, 350, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' },
+            1: { name: 'light-1', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-o1'] = new REMOTES.DigitalControlRemote('digi-o1', 180, 350, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-o2'] = new REMOTES.DigitalControlRemote('digi-o2', 180, 420, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-o3'] = new REMOTES.DigitalControlRemote('digi-o3', 530, 350, this.pixiApp, {
+            0: { name: 'light-0', val: 0, type: 'light-switch' }
+        });
+
+        this.remotes['digi-o4'] = new REMOTES.DigitalControlRemote('digi-o4', 530, 420, this.pixiApp, {
             0: { name: 'light-0', val: 0, type: 'light-switch' }
         });
 
