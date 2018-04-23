@@ -138,7 +138,7 @@ class IoTMon {
             });
 
         /* Create MQTT client */
-        this.mqttClient = new MQTT.Client('192.168.232.130', 8080, '/', 'web-client');
+        this.mqttClient = new MQTT.Client('iot-rpi-00.local', 8081, '/', 'web-client');
         if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
             this.mqttClient.onConnectionLost = () => {
                 Console.log('Lost MQTT Connection!');
@@ -149,6 +149,9 @@ class IoTMon {
 
             /* Connect client */
             this.mqttClient.connect({
+                userName: 'iotuser',
+                password: 'iot12345',
+                useSSL: false,
                 onSuccess: () => {
                     Console.log('MQTT Connected!');
                     this.mqttClient.subscribe('home/mon');
