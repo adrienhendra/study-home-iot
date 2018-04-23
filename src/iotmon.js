@@ -3,6 +3,7 @@
 /* Import pixi.js */
 import * as PIXI from 'pixi.js';
 import 'pixi-sound';
+import * as MQTT from './paho-mqtt-103/paho-mqtt';
 
 /* Aliases */
 const PxApplication = PIXI.Application;
@@ -135,6 +136,28 @@ class IoTMon {
                 /* Begin game loop */
                 this.pixiApp.ticker.add(delta => this.gameLoop(delta));
             });
+
+        /* Create MQTT client */
+        this.mqttClient = new MQTT.Client('192.168.232.130', 8080, '/', 'web-client');
+        if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
+            this.mqttClient.onConnectionLost = () => {
+                Console.log('Lost MQTT Connection!');
+            };
+            this.mqttClient.onMessageArrived = () => {
+                Console.log('MQTT Message arrived!');
+            };
+
+            /* Connect client */
+            this.mqttClient.connect({
+                onSuccess: () => {
+                    Console.log('MQTT Connected!');
+                    this.mqttClient.subscribe('home/mon');
+                    let msg = new MQTT.Message('Hey!!');
+                    msg.destinationName = 'home/0';
+                    this.mqttClient.send(msg);
+                }
+            });
+        }
 
         // /* Sensors items */
         // this.sensors = new Array();
