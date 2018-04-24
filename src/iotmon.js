@@ -586,8 +586,16 @@ class IoTMon {
         let temp_gl_counter = this.updateTickCounter(delta);
 
         /* Update all sensors */
+        Object.keys(this.sensors).forEach(k => {
+            // Console.log(`${this.sensors[k].name}`);
+            this.sensors[k].redraw();
+        });
 
         /* Update all remotes */
+        Object.keys(this.remotes).forEach(k => {
+            // Console.log(`${this.remotes[k].name}`);
+            this.remotes[k].redraw();
+        });
 
         // /* Blinking sensor item */
         // if (temp_gl_counter < 50.0) {
@@ -657,7 +665,7 @@ class IoTMon {
                     Console.log('MQTT offline!');
                 });
 
-                this.mqttClient.on('error', (error) => {
+                this.mqttClient.on('error', error => {
                     Console.log(`MQTT error! ${error}`);
                 });
 
@@ -667,6 +675,35 @@ class IoTMon {
 
                 this.mqttClient.on('message', (topic, message, packet) => {
                     Console.log(`MQTT message! ${packet.cmd} - ${packet.topic}: ${message}`);
+
+                    /* Parse message and update value */
+                    if (undefined !== typeof packet.topic && null != packet.topic) {
+                        let t_device_found = false;
+                        /* Note for topic format: home/device/room/channel */
+                        let t_topic = packet.topic.toString().split('/');
+
+                        if ('sensors' == t_topic[1]) {
+                            /* Check for matching sensor */
+                            Object.keys(this.sensors).forEach(k => {
+                                if (t_topic[2] == this.sensors[k].name) {
+                                    this.sensors[k].updateControl(t_topic[3], parseFloat(message.toString()));
+                                    t_device_found = true;
+                                }
+                            });
+                        } else if ('remotes' == t_topic[1]) {
+                            /* Check for matching remotes */
+                            Object.keys(this.remotes).forEach(k => {
+                                if (t_topic[2] == this.remotes[k].name) {
+                                    this.remotes[k].updateControl(t_topic[3], parseFloat(message.toString()));
+                                    t_device_found = true;
+                                }
+                            });
+                        }
+
+                        if (false == t_device_found) {
+                            Console.log('Unsupported topic or device not registered');
+                        }
+                    }
                 });
 
                 this.mqttClient.on('packetsend', packet => {
@@ -678,7 +715,8 @@ class IoTMon {
                 });
 
                 /* Subscribe to topic */
-                this.mqttClient.subscribe('home/mon');
+                this.mqttClient.subscribe('home/sensors/#');
+                this.mqttClient.subscribe('home/remotes/#');
 
                 /* Publish test */
                 this.mqttClient.publish('home/0', 'Heylo!');

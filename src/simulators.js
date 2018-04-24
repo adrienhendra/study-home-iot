@@ -140,6 +140,7 @@ let sim_ticker = null;
 function SimStart() {
     sim_ticker = setInterval(() => {
         Console.log('Tick...');
+        PublishSimulation();
     }, 1000);
 }
 
@@ -148,6 +149,20 @@ function SimStop() {
         clearInterval(sim_ticker);
     } else {
         Console.log('Simulation ticker is not yet created!');
+    }
+}
+
+const SIM_SENSOR = {
+
+};
+
+const SIM_REMOTES = {
+
+};
+
+function PublishSimulation() {
+    if (null != mqttClient && true == mqttState) {
+        mqttClient.publish('home/sensors/humi-br1/0', (Math.random() * 100).toString());
     }
 }
 
