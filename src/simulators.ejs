@@ -2,7 +2,8 @@
 <html>
 
 <head>
-    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>
         <%= htmlWebpackPlugin.options.title %>
     </title>
@@ -14,9 +15,13 @@
         <%= htmlWebpackPlugin.options.title %>
     </h1>
     <div class='container'>
+        <div class='container' id='app-sim-control-container'>
+            <button id='sim-btn-start'>Start</button>
+            <button id='sim-btn-stop'>Stop</button>
+            <label for='sim-time-spinner'>Select:</label>
+            <input id='sim-timer-spinner' name='sim-timer-value'>
+        </div>
         <div class='container' id='app-sim-container'></div>
-    </div>
-    <div class='container'>
         <div class='container' id='app-sim-dbg-container'></div>
     </div>
 </body>

@@ -1,10 +1,18 @@
-/* Files to bundle */
-import './style.css';
-import './home.png';
+/* Include jQuery module, better to be before any other scripts */
+import $ from 'jquery';
 
 /* Import bootstrap */
 import 'bootstrap';
+import 'popper.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Then jquery */
+import 'webpack-jquery-ui';
+import 'webpack-jquery-ui/css';
+
+/* Files to bundle */
+import './style.css';
+import './home.png';
 
 /* Import firebase */
 // import { app } from 'firebase';
@@ -25,9 +33,9 @@ test();
 
 Console.log('Test 3');
 
-{
+$(() => {
     /* Get document element */
     const appWinContainer = document.getElementById('app-container');
 
     let appWin = new IoTMon(appWinContainer);
-}
+});

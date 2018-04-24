@@ -3,9 +3,11 @@
         "bootstrap": "^4.1.0",
         "firebase": "^4.12.1",
         "jquery": "^3.3.1",
+        "jquery-ui": "^1.12.1",
         "pixi-sound": "^2.0.2",
         "pixi.js": "^4.7.3",
-        "popper.js": "^1.14.3"
+        "popper.js": "^1.14.3",
+        "webpack-jquery-ui": "^1.0.0"
     },
     "devDependencies": {
         "css-loader": "^0.28.11",
@@ -32,8 +34,8 @@
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "webpack --mode=production",
         "build-dev": "webpack --mode=development",
-        "start": "yarn build-dev && webpack-dev-server",
-        "start-dev": "yarn build-dev && webpack-dev-server --hot --inline"
+        "start": "yarn build && webpack-dev-server --mode=production",
+        "start-dev": "yarn build-dev && webpack-dev-server --hot --inline --mode=development"
     },
     "keywords": [
         "iot"

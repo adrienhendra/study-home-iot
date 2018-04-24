@@ -6,7 +6,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    // mode: 'development',
+    mode: 'production',
 
     entry: {
         main: ['./src/index.js'],
@@ -72,6 +72,12 @@ module.exports = {
 
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery'
+        }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             title: 'Home Monitoring Application',
