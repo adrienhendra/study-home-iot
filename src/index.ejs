@@ -11,9 +11,19 @@
 </head>
 
 <body>
-    <h1>
-        <%= htmlWebpackPlugin.options.title %>
-    </h1>
+    <div class='container'>
+        <h1>
+            <%= htmlWebpackPlugin.options.title %>
+        </h1>
+    </div>
+    <div class='container' id='app-sim-control-container'>
+        <button id='app-btn-connect'>Connect</button>
+        <button id='app-btn-disconnect'>Disconnect</button>
+        <div id='app-connection-status' class="alert" role="alert">
+            <p id='app-connection-status-text'>Not connected</p>
+        </div>
+    </div>
+    <hr/>
     <div class='container'>
         <div class='container' id='app-container'></div>
         <div class='container' id='app-dbg-container'></div>

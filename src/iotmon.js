@@ -3,7 +3,9 @@
 /* Import pixi.js */
 import * as PIXI from 'pixi.js';
 import 'pixi-sound';
-import * as MQTT from './paho-mqtt-103/paho-mqtt';
+// import * as MQTT from './paho-mqtt-103/paho-mqtt';
+// import {Paho} from './paho-mqtt-103/paho-mqtt';
+import * as MQTT from 'mqtt';
 
 /* Aliases */
 const PxApplication = PIXI.Application;
@@ -32,6 +34,11 @@ import './sounds/chime.mp3';
 import { scaleToWindow } from './scaleToWindow';
 import * as SENSORS from './sensors';
 import * as REMOTES from './remotes';
+
+// const SRV_IP_ADDRESS = 'iot-rpi-00.local';
+const SRV_IP_ADDRESS = '192.168.1.6';
+const MQTT_USER = 'iotuser';
+const MQTT_PASSWORD = 'iot12345';
 
 // /* Import assets (for testing only) */
 // import './sounds/chime.mp3';
@@ -73,6 +80,9 @@ class IoTMon {
         this.gamePlay = this.gamePlay.bind(this);
         this.createSensors = this.createSensors.bind(this);
         this.createRemotes = this.createRemotes.bind(this);
+
+        this.mqttConnect = this.mqttConnect.bind(this);
+        this.mqttDisconnect = this.mqttDisconnect.bind(this);
 
         /* Build manifest data. This will be loaded by PIXI.loader engine */
         this.appManifest = [
@@ -137,30 +147,37 @@ class IoTMon {
                 this.pixiApp.ticker.add(delta => this.gameLoop(delta));
             });
 
-        /* Create MQTT client */
-        this.mqttClient = new MQTT.Client('iot-rpi-00.local', 8081, '/', 'web-client');
-        if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
-            this.mqttClient.onConnectionLost = () => {
-                Console.log('Lost MQTT Connection!');
-            };
-            this.mqttClient.onMessageArrived = () => {
-                Console.log('MQTT Message arrived!');
-            };
+        /* MQTT Client states, defaults disconnected */
+        this.mqttState = false;
 
-            /* Connect client */
-            this.mqttClient.connect({
-                userName: 'iotuser',
-                password: 'iot12345',
-                useSSL: false,
-                onSuccess: () => {
-                    Console.log('MQTT Connected!');
-                    this.mqttClient.subscribe('home/mon');
-                    let msg = new MQTT.Message('Hey!!');
-                    msg.destinationName = 'home/0';
-                    this.mqttClient.send(msg);
-                }
-            });
-        }
+        // /* Create MQTT client */
+        // this.mqttClient = MQTT.connect(`ws://${SRV_IP_ADDRESS}:8081`, {
+        //     clientId: `mqttjs${Math.random()
+        //         .toString(16)
+        //         .substr(2, 8)}`,
+        //     protocolId: 'MQTT',
+        //     protocolVersion: 4,
+        //     clean: true,
+        //     reconnectPeriod: 1000,
+        //     connectTimeout: 30 * 1000,
+        //     username: 'iotuser',
+        //     password: 'iot12345',
+        //     will: {
+        //         topic: 'WILL',
+        //         payload: 'Goodbye!',
+        //         qos: 0,
+        //         retain: false
+        //     },
+        //     resubscribe: true
+        // });
+
+        // if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
+        //     this.mqttClient.subscribe('home/mon');
+        //     this.mqttClient.publish('home/0', 'Heylo!');
+        //     this.mqttClient.on('message', (topic, msg) => {
+        //         Console.log('MQTT: ' + msg);
+        //     });
+        // }
 
         // /* Sensors items */
         // this.sensors = new Array();
@@ -594,6 +611,94 @@ class IoTMon {
         // if (this.sensors_dict['test'].sprite.y > 400) {
         //     this.sensors_dict['test'].sprite.y = 100;
         // }
+    }
+
+    /* MQTT methods */
+    mqttConnect(hostUrl) {
+        if (false == this.mqttState) {
+            let temp_url = null != hostUrl ? hostUrl : `ws://${SRV_IP_ADDRESS}:8081`;
+
+            /* Create MQTT client */
+            this.mqttClient = MQTT.connect(temp_url, {
+                clientId: `mqttjs_${Math.random()
+                    .toString(16)
+                    .substr(2, 8)}`,
+                protocolId: 'MQTT',
+                protocolVersion: 4,
+                clean: true,
+                reconnectPeriod: 1000,
+                connectTimeout: 30 * 1000,
+                username: MQTT_USER,
+                password: MQTT_PASSWORD,
+                will: {
+                    topic: 'WILL',
+                    payload: 'Goodbye!',
+                    qos: 0,
+                    retain: false
+                },
+                resubscribe: true
+            });
+
+            if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
+                /* Subscribe to all MQTT events */
+                this.mqttClient.on('connect', () => {
+                    Console.log('MQTT Connected!');
+                });
+
+                this.mqttClient.on('reconnect', () => {
+                    Console.log('MQTT Reconnected!');
+                });
+
+                this.mqttClient.on('close', () => {
+                    Console.log('MQTT close!');
+                });
+
+                this.mqttClient.on('offline', () => {
+                    Console.log('MQTT offline!');
+                });
+
+                this.mqttClient.on('error', (error) => {
+                    Console.log(`MQTT error! ${error}`);
+                });
+
+                this.mqttClient.on('end', () => {
+                    Console.log('MQTT end!');
+                });
+
+                this.mqttClient.on('message', (topic, message, packet) => {
+                    Console.log(`MQTT message! ${packet.cmd} - ${packet.topic}: ${message}`);
+                });
+
+                this.mqttClient.on('packetsend', packet => {
+                    Console.log(`MQTT packet send! ${packet.cmd} - ${packet.topic}`);
+                });
+
+                this.mqttClient.on('packetreceive', packet => {
+                    Console.log(`MQTT packet received! ${packet.cmd} - ${packet.topic}`);
+                });
+
+                /* Subscribe to topic */
+                this.mqttClient.subscribe('home/mon');
+
+                /* Publish test */
+                this.mqttClient.publish('home/0', 'Heylo!');
+            }
+
+            this.mqttState = true;
+        } else {
+            Console.log('MQTT already connected!');
+        }
+    }
+
+    mqttDisconnect() {
+        if (true == this.mqttState) {
+            this.mqttClient.end(false, () => {
+                Console.log('Connection closed!');
+            });
+            this.mqttState = false;
+        } else {
+            Console.log('MQTT already connected!');
+        }
     }
 }
 

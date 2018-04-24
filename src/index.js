@@ -38,4 +38,21 @@ $(() => {
     const appWinContainer = document.getElementById('app-container');
 
     let appWin = new IoTMon(appWinContainer);
+
+    /* Create a button */
+    let connect_btn = $('#app-btn-connect').button();
+    connect_btn.on('click', () => {
+        appWin.mqttConnect(null);
+        Console.log('Monitoring connected!');
+        $('#app-connection-status-text').text('MQTT Connected!');
+        $('#app-connection-status').removeClass('alert-danger').addClass('alert-success');
+    });
+
+    let disconnect_btn = $('#app-btn-disconnect').button();
+    disconnect_btn.on('click', () => {
+        appWin.mqttDisconnect();
+        Console.log('Monitoring disconnected!');
+        $('#app-connection-status-text').text('MQTT Disconnected!');        
+        $('#app-connection-status').removeClass('alert-success').addClass('alert-danger');        
+    });
 });

@@ -11,15 +11,23 @@
 </head>
 
 <body>
-    <h1>
-        <%= htmlWebpackPlugin.options.title %>
-    </h1>
+    <div class='container'>
+        <h1>
+            <%= htmlWebpackPlugin.options.title %>
+        </h1>
+    </div>
     <div class='container'>
         <div class='container' id='app-sim-control-container'>
+            <button id='sim-btn-connect'>Connect</button>
+            <button id='sim-btn-disconnect'>Disconnect</button>
+            <div id='sim-connection-status' class="alert" role="alert">
+                <p id='sim-connection-status-text'>Not connected</p>
+            </div>
+            <hr/>
             <button id='sim-btn-start'>Start</button>
             <button id='sim-btn-stop'>Stop</button>
             <label for='sim-time-spinner'>Select:</label>
-            <input id='sim-timer-spinner' name='sim-timer-value'>
+            <input id='sim-timer-spinner' name='sim-timer-value' value="1">
         </div>
         <div class='container' id='app-sim-container'></div>
         <div class='container' id='app-sim-dbg-container'></div>
