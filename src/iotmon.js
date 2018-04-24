@@ -3,8 +3,6 @@
 /* Import pixi.js */
 import * as PIXI from 'pixi.js';
 import 'pixi-sound';
-// import * as MQTT from './paho-mqtt-103/paho-mqtt';
-// import {Paho} from './paho-mqtt-103/paho-mqtt';
 import * as MQTT from 'mqtt';
 
 /* Aliases */
@@ -40,13 +38,6 @@ const SRV_IP_ADDRESS = '192.168.1.6';
 const MQTT_USER = 'iotuser';
 const MQTT_PASSWORD = 'iot12345';
 
-// /* Import assets (for testing only) */
-// import './sounds/chime.mp3';
-// import './assets/iot-home-textures.tjson';
-// import './assets/iot-home-textures.png';
-// import './assets/icon.png';
-// import './assets/cat.png';
-
 /* IoT Monitor top module */
 class IoTMon {
     constructor(appContainer) {
@@ -58,6 +49,9 @@ class IoTMon {
 
         /* Create remote object to keep track of all remotes */
         this.remotes = new Object();
+
+        /* Application monitor */
+        this.appMon = null;
 
         /* Create and initialize PIXI application */
         this.pixiApp = new PxApplication({
@@ -83,6 +77,9 @@ class IoTMon {
 
         this.mqttConnect = this.mqttConnect.bind(this);
         this.mqttDisconnect = this.mqttDisconnect.bind(this);
+
+        this.addStatusMonitor = this.addStatusMonitor.bind(this);
+        this.updateStatusMonitor = this.updateStatusMonitor.bind(this);
 
         /* Build manifest data. This will be loaded by PIXI.loader engine */
         this.appManifest = [
@@ -149,147 +146,6 @@ class IoTMon {
 
         /* MQTT Client states, defaults disconnected */
         this.mqttState = false;
-
-        // /* Create MQTT client */
-        // this.mqttClient = MQTT.connect(`ws://${SRV_IP_ADDRESS}:8081`, {
-        //     clientId: `mqttjs${Math.random()
-        //         .toString(16)
-        //         .substr(2, 8)}`,
-        //     protocolId: 'MQTT',
-        //     protocolVersion: 4,
-        //     clean: true,
-        //     reconnectPeriod: 1000,
-        //     connectTimeout: 30 * 1000,
-        //     username: 'iotuser',
-        //     password: 'iot12345',
-        //     will: {
-        //         topic: 'WILL',
-        //         payload: 'Goodbye!',
-        //         qos: 0,
-        //         retain: false
-        //     },
-        //     resubscribe: true
-        // });
-
-        // if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
-        //     this.mqttClient.subscribe('home/mon');
-        //     this.mqttClient.publish('home/0', 'Heylo!');
-        //     this.mqttClient.on('message', (topic, msg) => {
-        //         Console.log('MQTT: ' + msg);
-        //     });
-        // }
-
-        // /* Sensors items */
-        // this.sensors = new Array();
-        // this.sensors_dict = new Object();
-        // this.sensorTickCounter = 0.0;
-
-        // this.appBody = appBody;
-
-        // /* Pixi.js example */
-        // this.pixiApp = new PxApplication({
-        //     width: 640,
-        //     height: 640,
-        //     backgroundColor: 0x4b87f4,
-        //     antialias: true,
-        //     autoResize: true
-        // });
-
-        // this.appBody.appendChild(this.pixiApp.view);
-
-        // this.scale = 1.0;
-        // this.gameState = this.gamePlay;
-
-        // this.manifest = [
-        //     /* Main assets */
-        //     {
-        //         name: 'asset-textures',
-        //         url: 'assets/asset-textures.json',
-        //         onComplete: () => {
-        //             Console.log('Completed asset textures');
-        //         }
-        //     },
-        //     {
-        //         name: 'control-textures',
-        //         url: 'assets/control-textures.json',
-        //         onComplete: () => {
-        //             Console.log('Completed control textures');
-        //         }
-        //     },
-        //     {
-        //         name: 'weather-textures',
-        //         url: 'assets/weather-textures.json',
-        //         onComplete: () => {
-        //             Console.log('Completed weather textures');
-        //         }
-        //     },
-        //     /* These as for testing purpose only */
-        //     {
-        //         name: 'tex-icon',
-        //         url: 'assets/icon.png',
-        //         onComplete: () => {
-        //             Console.log('Completed icon');
-        //         }
-        //     },
-        //     {
-        //         name: 'tex-cat',
-        //         url: 'assets/cat.png',
-        //         onComplete: () => {
-        //             Console.log('Completed cat');
-        //         }
-        //     },
-        //     {
-        //         name: 'chime',
-        //         url: 'sounds/chime.mp3',
-        //         onComplete: () => {
-        //             Console.log('Completed chime');
-        //         }
-        //     }
-        // ];
-
-        // /* Load manifest */
-        // PxLoader.add([this.manifest])
-        //     .add('assets/iot-home-textures.json')
-        //     .on('progress', (loader, resource) => {
-        //         Console.log('Loading ... ' + resource.url + ' ' + loader.progress + ' %');
-        //         if (null != resource.error) {
-        //             Console.log(' Error: ' + resource.error);
-        //         }
-        //     })
-        //     .load(() => {
-        //         Console.log('All files loaded!');
-
-        //         /* Auto scale */
-        //         // this.autoScale();
-
-        //         /* Reinit state */
-        //         this.gameState = this.gamePlay;
-
-        //         /* Begin setup */
-        //         this.loadImage();
-
-        //         /* Begin game loop */
-        //         this.pixiApp.ticker.add(delta => this.gameLoop(delta));
-        //     });
-
-        // /* Make stage interactive */
-        // this.pixiApp.stage.interactive = true;
-        // this.pixiApp.stage.on('click', () => {
-        //     console.log('Stage clicked!');
-        // });
-
-        // /* Test object */
-        // this.testremotes = new REMOTES.DigitalControlRemote('DIG', {
-        //     0: { name: 'a', val: 0 },
-        //     1: { name: 'b', val: 0 },
-        //     2: { name: 'c', val: 0 }
-        // });
-
-        // // this.testremotes = new REMOTES.DigitalControlRemote('DIG', { 0: { name: 'a', val: 0 } });
-        // this.testremotes.updateControl(0, 'aa');
-        // this.testremotes.updateControl(2, 'aa');
-        // Console.log(`testremotes value is ${this.testremotes.readVal(0)}`);
-        // Console.log(`testremotes value is ${this.testremotes.readVal(2)}`);
     }
 
     autoScale() {
@@ -596,33 +452,10 @@ class IoTMon {
             // Console.log(`${this.remotes[k].name}`);
             this.remotes[k].redraw();
         });
-
-        // /* Blinking sensor item */
-        // if (temp_gl_counter < 50.0) {
-        //     this.sensors[1].visible = true;
-        // } else {
-        //     this.sensors[1].visible = false;
-        // }
-
-        // /* Move Sprite */
-        // this.sensors[0].vx = 2;
-        // this.sensors[0].vy = 0;
-        // this.sensors[0].x += this.sensors[0].vx;
-        // if (this.sensors[0].x > 400) {
-        //     this.sensors[0].x = 100;
-        // }
-
-        // this.sensors[2].updateText('ASA: ' + temp_gl_counter);
-
-        // /* Move test sprite */
-        // this.sensors_dict['test'].sprite.y += 1;
-        // if (this.sensors_dict['test'].sprite.y > 400) {
-        //     this.sensors_dict['test'].sprite.y = 100;
-        // }
     }
 
     /* MQTT methods */
-    mqttConnect(hostUrl) {
+    mqttConnect(hostUrl, username, password) {
         if (false == this.mqttState) {
             let temp_url = null != hostUrl ? hostUrl : `ws://${SRV_IP_ADDRESS}:8081`;
 
@@ -636,8 +469,8 @@ class IoTMon {
                 clean: true,
                 reconnectPeriod: 1000,
                 connectTimeout: 30 * 1000,
-                username: MQTT_USER,
-                password: MQTT_PASSWORD,
+                username: username,
+                password: password,
                 will: {
                     topic: 'WILL',
                     payload: 'Goodbye!',
@@ -650,27 +483,33 @@ class IoTMon {
             if (undefined !== typeof this.mqttClient && null !== this.mqttClient) {
                 /* Subscribe to all MQTT events */
                 this.mqttClient.on('connect', () => {
-                    Console.log('MQTT Connected!');
+                    Console.log('MQTT Connect!');
+                    this.updateStatusMonitor(true, 'MQTT connect!');
                 });
 
                 this.mqttClient.on('reconnect', () => {
-                    Console.log('MQTT Reconnected!');
+                    Console.log('MQTT Reconnect!');
+                    this.updateStatusMonitor(false, 'MQTT reconnect!');
                 });
 
                 this.mqttClient.on('close', () => {
                     Console.log('MQTT close!');
+                    this.updateStatusMonitor(false, 'MQTT close!');
                 });
 
                 this.mqttClient.on('offline', () => {
                     Console.log('MQTT offline!');
+                    this.updateStatusMonitor(false, 'MQTT offline!');
                 });
 
                 this.mqttClient.on('error', error => {
                     Console.log(`MQTT error! ${error}`);
+                    this.updateStatusMonitor(false, `MQTT error! ${error}`);
                 });
 
                 this.mqttClient.on('end', () => {
                     Console.log('MQTT end!');
+                    this.updateStatusMonitor(false, 'MQTT disconnected');
                 });
 
                 this.mqttClient.on('message', (topic, message, packet) => {
@@ -736,6 +575,19 @@ class IoTMon {
             this.mqttState = false;
         } else {
             Console.log('MQTT already connected!');
+        }
+    }
+
+    /* Status monitor */
+    addStatusMonitor(callback) {
+        if (undefined !== callback && null != callback) {
+            this.appMon = callback;
+        }
+    }
+
+    updateStatusMonitor(ok, msg) {
+        if (undefined !== this.appMon && null != this.appMon) {
+            this.appMon(ok, msg);
         }
     }
 }

@@ -18,16 +18,27 @@
     </div>
     <div class='container'>
         <div class='container' id='app-sim-control-container'>
+            <label for="sim-input-hostname">Hostname: </label>
+            <input id="sim-input-hostname" type='text'>
+            <br>
+            <label for="sim-input-username">Username: </label>
+            <input id="sim-input-username" type='text'>
+            <br>
+            <label for="sim-input-password">Password: </label>
+            <input id="sim-input-password" type='password'>
+            <br>
             <button id='sim-btn-connect'>Connect</button>
             <button id='sim-btn-disconnect'>Disconnect</button>
             <div id='sim-connection-status' class="alert" role="alert">
                 <p id='sim-connection-status-text'>Not connected</p>
             </div>
-            <hr/>
+            <hr>
+            <label for='sim-spinner-updrate'>Update Rate (sec):</label>
+            <input id='sim-spinner-updrate' name='sim-spinner-updrate-value' value="1">
+            <br>
+            <br>
             <button id='sim-btn-start'>Start</button>
             <button id='sim-btn-stop'>Stop</button>
-            <label for='sim-time-spinner'>Select:</label>
-            <input id='sim-timer-spinner' name='sim-timer-value' value="1">
         </div>
         <div class='container' id='app-sim-container'></div>
         <div class='container' id='app-sim-dbg-container'></div>

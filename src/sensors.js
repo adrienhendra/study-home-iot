@@ -64,7 +64,7 @@ class BaseSensor {
 
                 /* Values are always string */
                 remote_text = new PxText(this.controlObjects[k].val);
-                remote_text.style = { fill: 'black', fontSize: '32px', fontFamily: 'courier' };
+                remote_text.style = { fill: 'black', fontSize: '24px', fontFamily: 'courier' };
 
                 /* Attach function as property to update the sprite */
                 remote_container.updateVal = text => {
@@ -86,7 +86,7 @@ class BaseSensor {
                 let text_y_offset = 0;
                 let max_y_size = 0;
                 if (null !== remote_sprite) {
-                    /* Resize sprite to 16x16px */
+                    /* Resize sprite to 32x32px */
                     remote_sprite.scale.set(32.0 / remote_sprite.width);
 
                     remote_sprite.position.set(0, 0);

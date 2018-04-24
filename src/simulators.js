@@ -13,16 +13,9 @@ import 'webpack-jquery-ui/css';
 /* Include MQTT */
 import * as MQTT from 'mqtt';
 
-// /* Import bootstrap */
-// import 'bootstrap';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-
 /* Files to bundle */
 import './style.css';
 import './home.png';
-
-/* Import my modules */
-// import IoTMon from './iotmon';
 
 /* Alias for my console debug */
 const Console = console;
@@ -32,22 +25,29 @@ const SRV_IP_ADDRESS = '192.168.1.6';
 const MQTT_USER = 'iotuser';
 const MQTT_PASSWORD = 'iot12345';
 
-var test = () => {
-    Console.log('SIM: Hello World');
-    //   alert("Heeeei!");
-};
-
-Console.log('SIM: Test 2');
-test();
-
-Console.log('SIM: Test 3');
-
 /*****************************************************************************/
 let mqttClient = null;
 let mqttState = false;
 
+/*****************************************************************************/
+/* UI Update */
+function updateStatusMonitor(ok, msg) {
+    if (true == ok) {
+        $('#sim-connection-status-text').text(msg);
+        $('#sim-connection-status')
+            .removeClass('alert-danger')
+            .addClass('alert-success');
+    } else {
+        $('#sim-connection-status-text').text(msg);
+        $('#sim-connection-status')
+            .removeClass('alert-success')
+            .addClass('alert-danger');
+    }
+}
+
+/*****************************************************************************/
 /* MQTT function */
-function mqttConnect(hostUrl) {
+function mqttConnect(hostUrl, username, password) {
     if (false == mqttState) {
         let temp_url = null != hostUrl ? hostUrl : `ws://${SRV_IP_ADDRESS}:8081`;
 
@@ -61,8 +61,8 @@ function mqttConnect(hostUrl) {
             clean: true,
             reconnectPeriod: 1000,
             connectTimeout: 30 * 1000,
-            username: MQTT_USER,
-            password: MQTT_PASSWORD,
+            username: username,
+            password: password,
             will: {
                 topic: 'WILL',
                 payload: 'Goodbye!',
@@ -75,27 +75,33 @@ function mqttConnect(hostUrl) {
         if (undefined !== typeof mqttClient && null !== mqttClient) {
             /* Subscribe to all MQTT events */
             mqttClient.on('connect', () => {
-                Console.log('MQTT Connected!');
+                Console.log('MQTT Connect!');
+                updateStatusMonitor(true, 'MQTT connect!');
             });
 
             mqttClient.on('reconnect', () => {
-                Console.log('MQTT Reconnected!');
+                Console.log('MQTT Reconnect!');
+                updateStatusMonitor(false, 'MQTT reconnect!');
             });
 
             mqttClient.on('close', () => {
                 Console.log('MQTT close!');
+                updateStatusMonitor(false, 'MQTT close!');
             });
 
             mqttClient.on('offline', () => {
                 Console.log('MQTT offline!');
+                updateStatusMonitor(false, 'MQTT offline!');
             });
 
             mqttClient.on('error', error => {
                 Console.log(`MQTT error! ${error}`);
+                updateStatusMonitor(false, `MQTT error! ${error}`);
             });
 
             mqttClient.on('end', () => {
                 Console.log('MQTT end!');
+                updateStatusMonitor(false, 'MQTT disconnected!');
             });
 
             mqttClient.on('message', (topic, message, packet) => {
@@ -137,11 +143,14 @@ function mqttDisconnect() {
 /*****************************************************************************/
 /* Simulator function */
 let sim_ticker = null;
-function SimStart() {
+function SimStart(updateRate = 1) {
+    let temp_updaterate = updateRate * 1000;
+    if (temp_updaterate > 60000) temp_updaterate == 60000;
+    if (temp_updaterate < 1000) temp_updaterate == 1;
     sim_ticker = setInterval(() => {
         Console.log('Tick...');
         PublishSimulation();
-    }, 1000);
+    }, temp_updaterate);
 }
 
 function SimStop() {
@@ -153,45 +162,110 @@ function SimStop() {
 }
 
 const SIM_SENSOR = {
-
+    'temp-br1': { 0: 25 },
+    'humi-br1': { 0: 70 },
+    'temp-br2': { 0: 25 },
+    'humi-br2': { 0: 70 },
+    'temp-br3': { 0: 25 },
+    'humi-br3': { 0: 70 },
+    'temp-dr': { 0: 25 },
+    'humi-dr': { 0: 70 }
 };
 
 const SIM_REMOTES = {
-
+    'digi-br1': { 0: 0, 1: 0 },
+    'digi-br2': { 0: 0 },
+    'digi-br3': { 0: 0 },
+    'digi-dr': { 0: 0, 1: 0, 2: 0, 3: 0 },
+    'digi-kit': { 0: 0 },
+    'digi-sto': { 0: 0 },
+    'digi-gar': { 0: 0, 1: 0, 2: 0 },
+    'digi-t0': { 0: 0 },
+    'digi-t1': { 0: 0 },
+    'digi-t2': { 0: 0 },
+    'digi-o0': { 0: 0, 1: 0 },
+    'digi-o1': { 0: 0 },
+    'digi-o2': { 0: 0 },
+    'digi-o3': { 0: 0 },
+    'digi-o4': { 0: 0 }
 };
+
+function simRandomize(input) {
+    return (input * Math.random() + Math.random()).toFixed(1);
+}
+
+function simRandomizeBool(input) {
+    let rn = Math.random();
+    let retval = '0';
+    if (rn > 0.5) {
+        retval = '1';
+    } else {
+        retval = '0';
+    }
+
+    return retval;
+}
 
 function PublishSimulation() {
     if (null != mqttClient && true == mqttState) {
-        mqttClient.publish('home/sensors/humi-br1/0', (Math.random() * 100).toString());
+        /* Simulate each sensors */
+        Object.keys(SIM_SENSOR).forEach(k => {
+            Object.keys(SIM_SENSOR[k]).forEach(c => {
+                /* Create topic */
+                let topic = `home/sensors/${k}/${c}`;
+                let strval = simRandomize(SIM_SENSOR[k][c]);
+                Console.log(`Publish: ${topic} ${strval}`);
+                mqttClient.publish(topic, strval);
+            });
+        });
+
+        /* Simulate each remotes */
+        Object.keys(SIM_REMOTES).forEach(k => {
+            Object.keys(SIM_REMOTES[k]).forEach(c => {
+                /* Create topic */
+                let topic = `home/remotes/${k}/${c}`;
+                let strval = simRandomizeBool(SIM_REMOTES[k][c]);
+                Console.log(`Publish: ${topic} ${strval}`);
+                mqttClient.publish(topic, strval);
+            });
+        });
+
+        // mqttClient.publish('home/sensors/humi-br1/0', (Math.random() * 100).toString());
     }
 }
 
 /*****************************************************************************/
-/* Connect button with jQuery */
+/* Connect button with jQuery, load when document is ready */
 $(() => {
+    /* Set default hostname */
+    $('#sim-input-hostname').val('ws://localhost:8081');
+    $('#sim-input-username').val('iotuser');
+    $('#sim-input-password').val('iot12345');
+
     let connect_btn = $('#sim-btn-connect').button();
     connect_btn.on('click', () => {
-        mqttConnect(null);
+        let host = $('#sim-input-hostname').val();
+        let user = $('#sim-input-username').val();
+        let pass = $('#sim-input-password').val();
+        Console.log(`Connecting to ${host} ${user} ${pass}`);
+        /* Stop before startint mqtt*/
+        SimStop();
+        mqttConnect(host, user, pass);
         Console.log('MQTT connected!');
-        $('#sim-connection-status-text').text('MQTT Connected!');
-        $('#sim-connection-status')
-            .removeClass('alert-danger')
-            .addClass('alert-success');
     });
 
     let disconnect_btn = $('#sim-btn-disconnect').button();
     disconnect_btn.on('click', () => {
+        /* Stop sim before stoping mqtt */
+        SimStop();
         mqttDisconnect();
         Console.log('MQTT disconnected!');
-        $('#sim-connection-status-text').text('MQTT Disconnected!');
-        $('#sim-connection-status')
-            .removeClass('alert-success')
-            .addClass('alert-danger');
     });
 
     let start_btn = $('#sim-btn-start').button();
     start_btn.on('click', () => {
-        SimStart();
+        let update_rate = $('#sim-spinner-updrate').val();
+        SimStart(parseFloat(update_rate));
         Console.log('Simulator started!');
     });
 
@@ -201,5 +275,5 @@ $(() => {
         Console.log('Simulator stopped!');
     });
 
-    let timer_val = $('#sim-timer-spinner').spinner();
+    let timer_val = $('#sim-spinner-updrate').spinner();
 });

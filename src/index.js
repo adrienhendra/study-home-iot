@@ -10,6 +10,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'webpack-jquery-ui';
 import 'webpack-jquery-ui/css';
 
+/* Event emitter module */
+import * as EE from 'event-emitter';
+
 /* Files to bundle */
 import './style.css';
 import './home.png';
@@ -23,36 +26,47 @@ import IoTMon from './iotmon';
 /* Alias for my console debug */
 const Console = console;
 
-var test = () => {
-    Console.log('Hello World');
-    //   alert("Heeeei!");
-};
-
-Console.log('Test 2');
-test();
-
-Console.log('Test 3');
-
+/* Load when document is ready */
 $(() => {
     /* Get document element */
     const appWinContainer = document.getElementById('app-container');
 
+    /* Set default hostname */
+    $('#app-input-hostname').val('ws://localhost:8081');
+    $('#app-input-username').val('iotuser');
+    $('#app-input-password').val('iot12345');
+
     let appWin = new IoTMon(appWinContainer);
+
+    /* Need to fix this in the future ... */
+    appWin.addStatusMonitor((ok, msg) => {
+        if (true == ok) {
+            $('#app-connection-status-text').text(msg);
+            $('#app-connection-status')
+                .removeClass('alert-danger')
+                .addClass('alert-success');
+        } else {
+            $('#app-connection-status-text').text(msg);
+            $('#app-connection-status')
+                .removeClass('alert-success')
+                .addClass('alert-danger');
+        }
+    });
 
     /* Create a button */
     let connect_btn = $('#app-btn-connect').button();
     connect_btn.on('click', () => {
-        appWin.mqttConnect(null);
+        let host = $('#app-input-hostname').val();
+        let user = $('#app-input-username').val();
+        let pass = $('#app-input-password').val();
+        Console.log(`Connecting to ${host} ${user} ${pass}`);
+        appWin.mqttConnect(host, user, pass);
         Console.log('Monitoring connected!');
-        $('#app-connection-status-text').text('MQTT Connected!');
-        $('#app-connection-status').removeClass('alert-danger').addClass('alert-success');
     });
 
     let disconnect_btn = $('#app-btn-disconnect').button();
     disconnect_btn.on('click', () => {
         appWin.mqttDisconnect();
         Console.log('Monitoring disconnected!');
-        $('#app-connection-status-text').text('MQTT Disconnected!');        
-        $('#app-connection-status').removeClass('alert-success').addClass('alert-danger');        
     });
 });
