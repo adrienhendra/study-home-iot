@@ -1,18 +1,21 @@
 'use strict';
 
 const webpack = require('webpack');
-const fs = require('fs');
+// const fs = require('fs');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
+    // mode: 'development',
 
-    entry: ['webpack-dev-server/client?http://localhost:5000', 'webpack/hot/only-dev-server', './src/index.js'],
+    entry: {
+        main: ['./src/index.js'],
+        simulator: ['./src/simulators.js']
+    },
 
     output: {
         path: path.resolve(__dirname, 'public'),
-        filename: 'bundle.js'
+        filename: '[name].bundle.js'
     },
 
     module: {
@@ -73,7 +76,15 @@ module.exports = {
             filename: 'index.html',
             title: 'Home Monitoring Application',
             hash: true,
+            chunks: ['main'],
             template: 'src/index.ejs'
+        }),
+        new HtmlWebpackPlugin({
+            filename: 'simulators.html',
+            title: 'Home Monitoring Application - Simulator',
+            hash: true,
+            chunks: ['simulator'],
+            template: 'src/simulators.ejs'
         })
     ],
 
@@ -81,8 +92,8 @@ module.exports = {
         contentBase: path.join(__dirname, 'public'),
         compress: true,
         port: 5000,
-        hot: true,
-        inline: true,
+        // hot: true,
+        // inline: true,
         host: '0.0.0.0'
     }
 };
