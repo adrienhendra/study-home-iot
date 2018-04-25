@@ -34,9 +34,12 @@ import * as SENSORS from './sensors';
 import * as REMOTES from './remotes';
 
 // const SRV_IP_ADDRESS = 'iot-rpi-00.local';
-const SRV_IP_ADDRESS = '192.168.1.6';
-const MQTT_USER = 'iotuser';
-const MQTT_PASSWORD = 'iot12345';
+// const SRV_IP_ADDRESS = '192.168.1.6';
+
+const SRV_IP_ADDRESS = '192.168.232.130';
+// const FIXED_HOST = 'ws://192.168.232.130:8081'; // VM
+// const MQTT_USER = 'iotuser';
+// const MQTT_PASSWORD = 'iot12345';
 
 /* IoT Monitor top module */
 class IoTMon {
@@ -396,7 +399,7 @@ class IoTMon {
         circle_cont.interactive = true;
         circle_cont.on('click', () => {
             Console.log('Circle container clicked!');
-            PxResources['chime'].sound.play();
+            // PxResources['chime'].sound.play();
 
             let test_sensor = new SENSORS.TemperatureSensor('dummy');
             Console.log(test_sensor.name);

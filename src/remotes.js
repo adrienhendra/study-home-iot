@@ -178,7 +178,7 @@ class DigitalControlRemote {
             this.updateControl(idx, 0, true);
         }
         Console.log(`New value for channel ${idx} is ${this.readVal(idx)}`);
-        PxResources['chime'].sound.play();
+        // PxResources['chime'].sound.play();
     }
 
     redraw() {

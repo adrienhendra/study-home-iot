@@ -26,15 +26,19 @@ import IoTMon from './iotmon';
 /* Alias for my console debug */
 const Console = console;
 
+const FIXED_HOST = 'ws://192.168.232.130:8081'; // VM
+const MQTT_USER = 'iotuser';
+const MQTT_PASSWORD = 'iot12345';
+
 /* Load when document is ready */
 $(() => {
     /* Get document element */
     const appWinContainer = document.getElementById('app-container');
 
     /* Set default hostname */
-    $('#app-input-hostname').val('ws://localhost:8081');
-    $('#app-input-username').val('iotuser');
-    $('#app-input-password').val('iot12345');
+    $('#app-input-hostname').val(FIXED_HOST);
+    $('#app-input-username').val(MQTT_USER);
+    $('#app-input-password').val(MQTT_PASSWORD);
 
     let appWin = new IoTMon(appWinContainer);
 

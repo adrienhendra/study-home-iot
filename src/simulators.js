@@ -21,7 +21,10 @@ import './home.png';
 const Console = console;
 
 // const SRV_IP_ADDRESS = 'iot-rpi-00.local';
-const SRV_IP_ADDRESS = '192.168.1.6';
+// const SRV_IP_ADDRESS = '192.168.1.6';
+const SRV_IP_ADDRESS = '192.168.232.130';
+
+const FIXED_HOST = 'ws://192.168.232.130:8081'; // VM
 const MQTT_USER = 'iotuser';
 const MQTT_PASSWORD = 'iot12345';
 
@@ -238,9 +241,9 @@ function PublishSimulation() {
 /* Connect button with jQuery, load when document is ready */
 $(() => {
     /* Set default hostname */
-    $('#sim-input-hostname').val('ws://localhost:8081');
-    $('#sim-input-username').val('iotuser');
-    $('#sim-input-password').val('iot12345');
+    $('#sim-input-hostname').val(FIXED_HOST);
+    $('#sim-input-username').val(MQTT_USER);
+    $('#sim-input-password').val(MQTT_PASSWORD);
 
     let connect_btn = $('#sim-btn-connect').button();
     connect_btn.on('click', () => {

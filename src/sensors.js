@@ -174,7 +174,7 @@ class BaseSensor {
         /* Show sensor details */
 
         /* Play notification */
-        PxResources['chime'].sound.play();
+        // PxResources['chime'].sound.play();
     }
 
     redraw() {
